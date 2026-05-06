@@ -158,6 +158,12 @@ class IssueController extends Controller
             $issue->update(['escalated_at' => now()]);
         }
 
+        // Regenerate summary if title or description changed
+        if ($request->has('description') || $request->has('title')) {
+            $summaryData = $this->summaryService->generateForIssue($issue);
+            $issue->update($summaryData);
+        }
+
         return redirect("/issues/{$issue->id}")->with('success', 'Issue updated successfully!');
     }
 

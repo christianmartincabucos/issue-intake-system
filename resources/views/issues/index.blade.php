@@ -34,6 +34,11 @@
     </style>
 </head>
 <body>
+    @if(session('success'))
+        <div style="background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; padding: 10px; margin-bottom: 15px; color: #155724;">
+            {{ session('success') }}
+        </div>
+    @endif
     <div class="container">
         <div class="header">
             <h1>Issue Tracker</h1>
