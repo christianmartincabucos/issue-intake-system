@@ -8,7 +8,9 @@ use App\Http\Requests\UpdateIssueRequest;
 use App\Models\Issue;
 use App\Services\IssueSummaryService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class IssueController extends Controller
 {
@@ -96,5 +98,82 @@ class IssueController extends Controller
         $issue->delete();
 
         return response()->json(['message' => 'Issue deleted successfully'], 200);
+    }
+
+    // Web UI Methods
+    public function webIndex(Request $request): View
+    {
+        $query = Issue::query();
+
+        if ($request->has('status')) {
+            $query->where('status', $request->input('status'));
+        }
+        if ($request->has('category')) {
+            $query->where('category', $request->input('category'));
+        }
+        if ($request->has('priority')) {
+            $query->where('priority', $request->input('priority'));
+        }
+
+        $issues = $query->orderBy('created_at', 'desc')->paginate(20);
+        return view('issues.index', compact('issues'));
+    }
+
+    public function webCreate(): View
+    {
+        return view('issues.create');
+    }
+
+    public function webStore(StoreIssueRequest $request): RedirectResponse
+    {
+        $issue = Issue::create($request->validated());
+        $summaryData = $this->summaryService->generateForIssue($issue);
+        $issue->update($summaryData);
+
+        if ($issue->needsEscalation()) {
+            $issue->update(['escalated_at' => now()]);
+        }
+
+        return redirect("/issues/{$issue->id}")->with('success', 'Issue created successfully!');
+    }
+
+    public function webShow(int $id): View
+    {
+        $issue = Issue::findOrFail($id);
+        return view('issues.show', compact('issue'));
+    }
+
+    public function webEdit(int $id): View
+    {
+        $issue = Issue::findOrFail($id);
+        return view('issues.create', compact('issue'));
+    }
+
+    public function webUpdate(UpdateIssueRequest $request, int $id): RedirectResponse
+    {
+        $issue = Issue::findOrFail($id);
+        $issue->update($request->validated());
+
+        if ($issue->needsEscalation() && !$issue->isEscalated()) {
+            $issue->update(['escalated_at' => now()]);
+        }
+
+        return redirect("/issues/{$issue->id}")->with('success', 'Issue updated successfully!');
+    }
+
+    public function webUpdateStatus(Request $request, int $id): RedirectResponse
+    {
+        $issue = Issue::findOrFail($id);
+        $issue->update(['status' => $request->input('status')]);
+
+        return redirect("/issues/{$issue->id}")->with('success', 'Issue status updated!');
+    }
+
+    public function webDestroy(int $id): RedirectResponse
+    {
+        $issue = Issue::findOrFail($id);
+        $issue->delete();
+
+        return redirect('/issues')->with('success', 'Issue deleted successfully!');
     }
 }
