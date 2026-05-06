@@ -24,11 +24,6 @@ class RulesBasedSummaryService
         'other' => 'Review the issue description and determine the appropriate team to handle it.',
     ];
 
-    private const PRIORITY_KEYWORDS = [
-        'critical' => ['urgent', 'critical', 'emergency', 'down', 'production is broken'],
-        'high' => ['important', 'high priority', 'soon', 'asap'],
-    ];
-
     public function generateSummary(string $title, string $description): string
     {
         $category = $this->detectCategory($title, $description);

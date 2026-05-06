@@ -10,7 +10,7 @@ use App\Services\IssueSummaryService;
 use App\Services\OpenAISummaryService;
 use App\Services\RulesBasedSummaryService;
 use Mockery;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class IssueSummaryServiceTest extends TestCase
 {

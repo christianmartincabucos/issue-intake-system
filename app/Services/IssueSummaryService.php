@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Enums\IssuePriority;
 use App\Models\Issue;
 use Illuminate\Support\Facades\Log;
 
@@ -27,11 +26,7 @@ class IssueSummaryService
             try {
                 return $this->generateWithAI($issue);
             } catch (\Exception $e) {
-                try {
-                    Log::warning('OpenAI failed, falling back to rules: ' . $e->getMessage());
-                } catch (\RuntimeException $logError) {
-                    // Log facade not available (e.g., in unit tests)
-                }
+                Log::warning('OpenAI failed, falling back to rules: ' . $e->getMessage());
             }
         }
 
@@ -40,16 +35,29 @@ class IssueSummaryService
 
     private function generateWithAI(Issue $issue): array
     {
+        $summary = null;
+        $action = null;
+
+        try {
+            $summary = $this->openAIService->generateSummary($issue->title, $issue->description);
+        } catch (\Exception $e) {
+            Log::warning('OpenAI summary generation failed: ' . $e->getMessage());
+        }
+
+        try {
+            $action = $this->openAIService->generateSuggestedAction($issue->title, $issue->description, $issue->priority);
+        } catch (\Exception $e) {
+            Log::warning('OpenAI suggested action generation failed: ' . $e->getMessage());
+        }
+
+        // If either failed, fall back to rules
+        if ($summary === null || $action === null) {
+            return $this->generateWithRules($issue);
+        }
+
         return [
-            'summary' => $this->openAIService->generateSummary(
-                $issue->title,
-                $issue->description
-            ),
-            'suggested_action' => $this->openAIService->generateSuggestedAction(
-                $issue->title,
-                $issue->description,
-                $issue->priority
-            ),
+            'summary' => $summary,
+            'suggested_action' => $action,
             'ai_generated' => true,
         ];
     }
