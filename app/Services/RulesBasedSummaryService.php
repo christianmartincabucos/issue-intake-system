@@ -89,7 +89,7 @@ class RulesBasedSummaryService
         return $sentences[0] ?? 'No description provided';
     }
 
-    private function summarizeLongDescription(string $title, string $description): string
+    private function summarizeLongDescription(string $_title, string $description): string
     {
         $sentences = preg_split('/[.!?]+/', $description);
         $sentences = array_filter(array_map('trim', $sentences));
