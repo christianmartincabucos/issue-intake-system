@@ -5,10 +5,14 @@ namespace App\Models;
 use App\Enums\IssuePriority;
 use App\Enums\IssueStatus;
 use App\Enums\IssueCategory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Issue extends Model
 {
+    use HasFactory;
+
+
     protected $fillable = [
         'title',
         'description',
