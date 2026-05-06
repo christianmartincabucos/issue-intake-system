@@ -12,9 +12,9 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
-            $table->enum('priority', ['low', 'medium', 'high', 'critical'])->default('medium');
-            $table->enum('category', ['bug', 'feature_request', 'support', 'infrastructure', 'security', 'other'])->default('support');
-            $table->enum('status', ['open', 'in_progress', 'resolved', 'closed'])->default('open');
+            $table->string('priority')->default('medium');
+            $table->string('category')->default('support');
+            $table->string('status')->default('open');
             $table->string('summary')->nullable();
             $table->string('suggested_action')->nullable();
             $table->timestamp('escalated_at')->nullable();
