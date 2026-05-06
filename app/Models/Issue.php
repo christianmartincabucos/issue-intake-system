@@ -21,6 +21,7 @@ class Issue extends Model
         'status',
         'summary',
         'suggested_action',
+        'ai_generated',
         'escalated_at',
     ];
 
