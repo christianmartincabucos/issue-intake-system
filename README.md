@@ -15,17 +15,17 @@ A Laravel-based issue tracking system with AI-powered summary generation.
 ## Tech Stack
 
 - **Backend**: PHP 8.2+, Laravel 11
-- **Database**: SQLite (relational, zero-config, perfect for demos)
+- **Database**: MySQL (relational, production-ready)
 - **AI**: OpenAI API with rules-based fallback
 - **Frontend**: Laravel Blade templates
 
-## Why SQLite?
+## Why MySQL?
 
-SQLite was chosen for this demonstration because:
-- Zero configuration - no separate server process needed
-- Self-contained database file
-- Perfect for development and testing
-- Easy to switch to PostgreSQL/MySQL in production
+MySQL was chosen for this project because:
+- Production-ready relational database
+- Widely used and well-documented
+- Easy to set up with Docker
+- Powers the `cpras` database container
 
 ## Setup
 
@@ -47,14 +47,19 @@ cd issue-intake-system
 composer install
 ```
 
-3. Create the SQLite database:
-```bash
-touch database/database.sqlite
-```
-
-4. Copy the environment file:
+3. Copy the environment file:
 ```bash
 cp .env.example .env
+```
+
+4. Configure MySQL connection in `.env`:
+```bash
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3307
+DB_DATABASE=cpras
+DB_USERNAME=root
+DB_PASSWORD=12345678
 ```
 
 5. Generate the application key:
@@ -178,10 +183,14 @@ app/
 │   ├── Controllers/IssueController.php   # API + Web controllers
 │   └── Requests/   # Form request validation
 ├── Models/Issue.php # Eloquent model
+├── Repositories/
+│   ├── Contracts/IssueRepositoryInterface.php   # Repository interface
+│   └── EloquentIssueRepository.php               # Eloquent implementation
 └── Services/
-    ├── IssueSummaryService.php        # Orchestrator
-    ├── OpenAISummaryService.php       # OpenAI integration
-    └── RulesBasedSummaryService.php   # Fallback engine
+    ├── IssueService.php             # Business logic
+    ├── IssueSummaryService.php      # Orchestrator
+    ├── OpenAISummaryService.php     # OpenAI integration
+    └── RulesBasedSummaryService.php # Fallback engine
 ```
 
 ## What I Would Improve With More Time
@@ -194,7 +203,7 @@ app/
 6. **Analytics Dashboard**: Track issue metrics and trends
 7. **API Rate Limiting**: Protect the API from abuse
 8. **Webhooks**: Integrate with external tools like Slack
-9. **Database Migrations Path**: Support PostgreSQL/MySQL in production
+9. **Database Migrations Path**: Support PostgreSQL in production
 
 ## License
 
