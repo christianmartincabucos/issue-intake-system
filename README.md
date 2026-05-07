@@ -25,7 +25,7 @@ MySQL was chosen for this project because:
 - Production-ready relational database
 - Widely used and well-documented
 - Easy to set up with Docker
-- Powers the `cpras` database container
+- Powers the `issue-intake` database container
 
 ## Setup
 
@@ -57,7 +57,7 @@ cp .env.example .env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3307
-DB_DATABASE=cpras
+DB_DATABASE=issue-intake
 DB_USERNAME=root
 DB_PASSWORD=12345678
 ```
