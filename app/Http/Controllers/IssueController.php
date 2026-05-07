@@ -21,9 +21,20 @@ class IssueController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $status = $request->has('status') ? IssueStatus::from($request->input('status')) : null;
-        $category = $request->has('category') ? IssueCategory::from($request->input('category')) : null;
-        $priority = $request->has('priority') ? IssuePriority::from($request->input('priority')) : null;
+        $status = null;
+        if ($request->filled('status') && $request->input('status') !== '') {
+            $status = IssueStatus::from($request->input('status'));
+        }
+
+        $category = null;
+        if ($request->filled('category') && $request->input('category') !== '') {
+            $category = IssueCategory::from($request->input('category'));
+        }
+
+        $priority = null;
+        if ($request->filled('priority') && $request->input('priority') !== '') {
+            $priority = IssuePriority::from($request->input('priority'));
+        }
 
         $issues = $this->issueService->listIssues($status, $category, $priority);
 
@@ -66,9 +77,20 @@ class IssueController extends Controller
     // Web UI Methods
     public function webIndex(Request $request): View
     {
-        $status = $request->has('status') ? IssueStatus::from($request->input('status')) : null;
-        $category = $request->has('category') ? IssueCategory::from($request->input('category')) : null;
-        $priority = $request->has('priority') ? IssuePriority::from($request->input('priority')) : null;
+        $status = null;
+        if ($request->filled('status') && $request->input('status') !== '') {
+            $status = IssueStatus::from($request->input('status'));
+        }
+
+        $category = null;
+        if ($request->filled('category') && $request->input('category') !== '') {
+            $category = IssueCategory::from($request->input('category'));
+        }
+
+        $priority = null;
+        if ($request->filled('priority') && $request->input('priority') !== '') {
+            $priority = IssuePriority::from($request->input('priority'));
+        }
 
         $issues = $this->issueService->listIssues($status, $category, $priority);
         return view('issues.index', compact('issues'));
